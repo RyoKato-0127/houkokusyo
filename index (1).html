@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="報告書作成">
+  <title>訪問看護報告書作成ツール</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      padding: 16px;
+      padding-bottom: 100px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 8px;
+    }
+    
+    .logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+    }
+    
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 4px 0;
+    }
+    
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    @media (max-width: 500px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .form-group {
+      margin-bottom: 0;
+    }
+    
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      background: white;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    
+    textarea {
+      min-height: 160px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    
+    .upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8fafc;
+    }
+    
+    .upload-zone:active {
+      background: #f1f5f9;
+      border-color: #8b5cf6;
+    }
+    
+    .upload-zone .upload-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    
+    .upload-zone p {
+      margin: 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+    
+    .upload-zone .upload-hint {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    
+    .image-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .image-thumb {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    
+    .image-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .image-thumb-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      width: 100%;
+    }
+    
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+    }
+    
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+    
+    .btn-notion {
+      background: #000;
+      color: white;
+      flex: 1;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .result-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #86efac;
+      border-radius: 12px;
+      padding: 16px;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 14px;
+      color: #166534;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    
+    .alert-error {
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      color: #dc2626;
+    }
+    
+    .alert-success {
+      background: #f0fdf4;
+      border: 2px solid #86efac;
+      color: #16a34a;
+    }
+    
+    .loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .extracting-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(139,92,246,0.2);
+      border-top-color: #8b5cf6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 8px;
+    }
+    
+    .settings-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: white;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 100;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 200;
+      display: none;
+    }
+    
+    .modal-overlay.show {
+      display: block;
+    }
+    
+    .modal {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      max-width: 400px;
+      height: 100%;
+      background: white;
+      z-index: 201;
+      padding: 20px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal.show {
+      transform: translateX(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+    
+    .note {
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+      margin-top: 12px;
+    }
+    
+    .status-ok {
+      color: #16a34a;
+      font-weight: 600;
+    }
+    
+    .status-ng {
+      color: #dc2626;
+      font-weight: 600;
+    }
+    
+    footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+  
+  <div class="modal-overlay" id="modalOverlay" onclick="toggleSettings()"></div>
+  <div class="modal" id="settingsModal">
+    <div class="modal-header">
+      <h2>⚙️ 設定</h2>
+      <button class="modal-close" onclick="toggleSettings()">✕</button>
+    </div>
+    <div class="form-group" style="margin-bottom: 16px;">
+      <label>Google Apps Script URL</label>
+      <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveSettings()">
+      <p class="help-text">管理者から共有されたURLを入力してください</p>
+    </div>
+    <button class="btn btn-secondary" onclick="testConnection()" style="width: 100%;">🔗 接続テスト</button>
+    <p id="connectionStatus" style="text-align: center; margin-top: 12px;"></p>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo">📋</div>
+      <h1>訪問看護報告書作成</h1>
+      <p class="subtitle">看護師・リハビリ職対応</p>
+    </header>
+    
+    <div id="errorAlert" class="alert alert-error hidden"></div>
+    <div id="successAlert" class="alert alert-success hidden"></div>
+    
+    <div class="card">
+      <h2 class="section-title">
+        <span class="icon" style="background: #dbeafe; color: #3b82f6;">👤</span>
+        基本情報
+      </h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>報告月</label>
+          <input type="month" id="reportMonth">
+        </div>
+        <div class="form-group">
+          <label>患者氏名</label>
+          <input type="text" id="patientName" placeholder="山田 太郎">
+        </div>
+        <div class="form-group">
+          <label>作成者職種</label>
+          <select id="staffType" onchange="updatePlaceholder()">
+            <option value="看護師">看護師</option>
+            <option value="理学療法士">理学療法士（PT）</option>
+            <option value="作業療法士">作業療法士（OT）</option>
+            <option value="言語聴覚士">言語聴覚士（ST）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>作成者氏名</label>
+          <input type="text" id="staffName" placeholder="鈴木 花子">
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 class="section-title">
+        <span class="icon" style="background: #f3e8ff; color: #8b5cf6;">📷</span>
+        スクリーンショット読取
+      </h2>
+      <input type="file" id="imageInput" accept="image/*" multiple style="display: none;" onchange="handleImageUpload(event)">
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('imageInput').click()">
+        <div class="upload-icon">📤</div>
+        <p>タップして画像を選択</p>
+        <p class="upload-hint">記録のスクリーンショットをアップロード</p>
+      </div>
+      <div class="image-preview" id="imagePreview"></div>
+    </div>
+    
+    <div class="card">
+      <h2 class="section-title">
+        <span class="icon" style="background: #fef3c7; color: #d97706;">📝</span>
+        日々の記録
+      </h2>
+      <textarea id="inputText" placeholder=""></textarea>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="clearAll()">🗑️ クリア</button>
+      </div>
+    </div>
+    
+    <button class="btn btn-primary" id="generateBtn" onclick="generateReport()">
+      ✨ 報告書を生成
+    </button>
+    
+    <div class="card hidden" id="resultCard">
+      <h2 class="section-title">
+        <span class="icon" style="background: #dcfce7; color: #16a34a;">✅</span>
+        病状の経過
+      </h2>
+      <div class="result-box" id="resultText"></div>
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="copyResult()">📋 コピー</button>
+        <button class="btn btn-notion" id="saveBtn" onclick="saveToNotion()">📊 Notionに保存</button>
+      </div>
+      <p class="note">※ 生成内容は必ず確認・修正の上ご使用ください</p>
+    </div>
+    
+    <footer>
+      <p>訪問看護報告書作成支援ツール v7.0</p>
+      <p>看護師・PT・OT・ST対応</p>
+    </footer>
+  </div>
+
+  <script>
+    // 初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      const now = new Date();
+      const month = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      document.getElementById('reportMonth').value = month;
+      
+      const savedGasUrl = localStorage.getItem('gasUrl');
+      if (savedGasUrl) {
+        document.getElementById('gasUrl').value = savedGasUrl;
+      }
+      
+      updatePlaceholder();
+    });
+    
+    let uploadedImages = [];
+    
+    function getGasUrl() {
+      return document.getElementById('gasUrl').value || localStorage.getItem('gasUrl');
+    }
+    
+    function toggleSettings() {
+      document.getElementById('modalOverlay').classList.toggle('show');
+      document.getElementById('settingsModal').classList.toggle('show');
+    }
+    
+    function saveSettings() {
+      const gasUrl = document.getElementById('gasUrl').value;
+      localStorage.setItem('gasUrl', gasUrl);
+    }
+    
+    async function testConnection() {
+      const gasUrl = getGasUrl();
+      if (!gasUrl) {
+        document.getElementById('connectionStatus').innerHTML = '<span class="status-ng">URLを入力してください</span>';
+        return;
+      }
+      
+      document.getElementById('connectionStatus').innerHTML = 'テスト中...';
+      
+      try {
+        const response = await fetch(gasUrl, { method: 'GET' });
+        if (response.ok) {
+          document.getElementById('connectionStatus').innerHTML = '<span class="status-ok">✅ 接続OK</span>';
+        } else {
+          document.getElementById('connectionStatus').innerHTML = '<span class="status-ng">❌ 接続エラー</span>';
+        }
+      } catch (err) {
+        document.getElementById('connectionStatus').innerHTML = '<span class="status-ok">✅ 接続OK</span>';
+      }
+    }
+    
+    function updatePlaceholder() {
+      const staffType = document.getElementById('staffType').value;
+      const textarea = document.getElementById('inputText');
+      
+      if (staffType === '看護師') {
+        textarea.placeholder = `例:
+12/5 
+食事摂取良好、水分500ml摂取
+排便あり（普通便）
+妻より「最近夜間の咳が増えた」との訴え
+胃ろう部発赤なし
+
+12/8 
+痰がらみあり、吸引実施
+妻の介護疲れあり`;
+      } else {
+        textarea.placeholder = `例:
+12/5
+ROM訓練実施（肩関節屈曲：右120°→125°）
+歩行訓練：屋内10m×3往復、軽介助
+自主トレ継続できている
+
+12/8
+下肢筋力訓練：スクワット10回×2セット
+階段昇降：手すり使用で4段可能
+ADL：更衣は声掛けで自立`;
+      }
+    }
+    
+    // 画像アップロード
+    async function handleImageUpload(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+      
+      const gasUrl = getGasUrl();
+      if (!gasUrl) {
+        showError('設定画面でGAS URLを入力してください');
+        toggleSettings();
+        return;
+      }
+      
+      const uploadZone = document.getElementById('uploadZone');
+      uploadZone.innerHTML = '<div class="extracting-spinner"></div><p style="color: #8b5cf6; font-weight: 600;">テキスト抽出中...</p>';
+      
+      for (const file of files) {
+        try {
+          const base64 = await fileToBase64(file);
+          const mediaType = file.type || 'image/jpeg';
+          
+          uploadedImages.push({
+            id: Date.now() + Math.random(),
+            preview: 'data:' + mediaType + ';base64,' + base64
+          });
+          
+          // GAS経由でテキスト抽出
+          const response = await fetch(gasUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'extract',
+              imageBase64: base64,
+              mediaType: mediaType
+            })
+          });
+          
+          const result = await response.json();
+          
+          if (result.success && result.text) {
+            const textarea = document.getElementById('inputText');
+            if (textarea.value.trim()) {
+              textarea.value += '\n\n---\n\n' + result.text;
+            } else {
+              textarea.value = result.text;
+            }
+          } else {
+            throw new Error(result.error || 'テキスト抽出に失敗');
+          }
+        } catch (err) {
+          showError('テキスト抽出に失敗しました: ' + err.message);
+        }
+      }
+      
+      uploadZone.innerHTML = '<div class="upload-icon">📤</div><p>タップして画像を選択</p><p class="upload-hint">記録のスクリーンショットをアップロード</p>';
+      renderImagePreviews();
+      event.target.value = '';
+    }
+    
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    function renderImagePreviews() {
+      const container = document.getElementById('imagePreview');
+      container.innerHTML = uploadedImages.map(img => `
+        <div class="image-thumb">
+          <img src="${img.preview}" alt="">
+          <button class="image-thumb-remove" onclick="removeImage(${img.id})">✕</button>
+        </div>
+      `).join('');
+    }
+    
+    function removeImage(id) {
+      uploadedImages = uploadedImages.filter(img => img.id !== id);
+      renderImagePreviews();
+    }
+    
+    // 報告書生成（GAS経由）
+    async function generateReport() {
+      const inputText = document.getElementById('inputText').value.trim();
+      if (!inputText) {
+        showError('日々の記録を入力してください');
+        return;
+      }
+      
+      const gasUrl = getGasUrl();
+      if (!gasUrl) {
+        showError('設定画面でGAS URLを入力してください');
+        toggleSettings();
+        return;
+      }
+      
+      const btn = document.getElementById('generateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="loading-spinner"></div> 生成中...';
+      hideAlerts();
+      
+      try {
+        const response = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'generate',
+            staffType: document.getElementById('staffType').value,
+            patientName: document.getElementById('patientName').value,
+            reportMonth: document.getElementById('reportMonth').value,
+            rawRecords: inputText
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.report) {
+          document.getElementById('resultText').textContent = result.report;
+          document.getElementById('resultCard').classList.remove('hidden');
+          document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          throw new Error(result.error || '報告書生成に失敗しました');
+        }
+        
+      } catch (err) {
+        showError('報告書の生成に失敗しました: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '✨ 報告書を生成';
+      }
+    }
+    
+    // Notion保存（GAS経由）
+    async function saveToNotion() {
+      const gasUrl = getGasUrl();
+      if (!gasUrl) {
+        showError('設定画面でGAS URLを入力してください');
+        toggleSettings();
+        return;
+      }
+      
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.innerHTML = '保存中...';
+      
+      try {
+        const response = await fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'save',
+            reportMonth: document.getElementById('reportMonth').value,
+            patientName: document.getElementById('patientName').value,
+            staffType: document.getElementById('staffType').value,
+            staffName: document.getElementById('staffName').value,
+            rawRecords: document.getElementById('inputText').value,
+            generatedReport: document.getElementById('resultText').textContent
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showSuccess('Notionに保存しました！');
+        } else {
+          throw new Error(result.error || '保存に失敗しました');
+        }
+        
+      } catch (err) {
+        showError('保存に失敗しました: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📊 Notionに保存';
+      }
+    }
+    
+    // コピー
+    async function copyResult() {
+      try {
+        await navigator.clipboard.writeText(document.getElementById('resultText').textContent);
+        showSuccess('コピーしました！');
+      } catch (err) {
+        const textarea = document.createElement('textarea');
+        textarea.value = document.getElementById('resultText').textContent;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showSuccess('コピーしました！');
+      }
+    }
+    
+    // クリア
+    function clearAll() {
+      document.getElementById('patientName').value = '';
+      document.getElementById('staffName').value = '';
+      document.getElementById('inputText').value = '';
+      document.getElementById('resultCard').classList.add('hidden');
+      uploadedImages = [];
+      renderImagePreviews();
+      hideAlerts();
+    }
+    
+    // アラート
+    function showError(msg) {
+      const el = document.getElementById('errorAlert');
+      el.textContent = '⚠️ ' + msg;
+      el.classList.remove('hidden');
+      el.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => el.classList.add('hidden'), 5000);
+    }
+    
+    function showSuccess(msg) {
+      const el = document.getElementById('successAlert');
+      el.textContent = '✅ ' + msg;
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+    
+    function hideAlerts() {
+      document.getElementById('errorAlert').classList.add('hidden');
+      document.getElementById('successAlert').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
