@@ -3,274 +3,1099 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>訪問看護報告書作成ツール v9.0</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="訪問看護記録">
+  <title>訪問看護記録</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f3f4f6; }
-    .input-field { width: 100%; border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.75rem; margin-top: 0.25rem; font-size: 1rem; }
-    .btn-primary { background-color: #2563eb; color: white; font-weight: bold; padding: 0.75rem; border-radius: 0.5rem; width: 100%; transition: background-color 0.2s; }
-    .btn-secondary { background-color: #111827; color: white; font-weight: bold; padding: 0.75rem; border-radius: 0.5rem; width: 100%; }
-    .btn-outline { background-color: white; border: 1px solid #d1d5db; color: #111827; font-weight: bold; padding: 0.75rem; border-radius: 0.5rem; width: 100%; }
-    .btn-primary:disabled, .btn-secondary:disabled, .btn-outline:disabled { background-color: #9ca3af; cursor: not-allowed; border-color: #9ca3af; color: white; }
-    .card { background-color: white; border-radius: 0.75rem; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1rem; }
-    .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; }
-    @keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+      background: linear-gradient(135deg, #f0f7f4 0%, #e8f4f0 50%, #f5f9f7 100%);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+    }
+    
+    html {
+      height: -webkit-fill-available;
+    }
+    
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px;
+      padding-bottom: 40px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+    
+    @keyframes ripple {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    @keyframes checkmark {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 10px;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a2e28;
+      margin: 0 0 6px 0;
+    }
+    
+    .header p {
+      font-size: 13px;
+      color: #6b7c74;
+      margin: 0;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0, 80, 60, 0.08);
+      padding: 24px;
+      margin-bottom: 16px;
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #e8f4f0;
+      color: #00816a;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    
+    .input-group {
+      margin-bottom: 14px;
+    }
+    
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    @media (max-width: 500px) {
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3d4f46;
+      margin-bottom: 6px;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e5ebe8;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      -webkit-appearance: none;
+      background: white;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #00a67d;
+    }
+    
+    .input-field.error {
+      border-color: #ef4444;
+    }
+    
+    .input-hint {
+      font-size: 11px;
+      color: #8a9a92;
+      margin-top: 4px;
+    }
+    
+    .input-error {
+      font-size: 11px;
+      color: #ef4444;
+      margin-top: 4px;
+    }
+    
+    .record-section {
+      text-align: center;
+      padding: 20px 0;
+    }
+    
+    .record-btn {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: linear-gradient(145deg, #00a67d, #008f6b);
+      box-shadow: 0 8px 32px rgba(0, 166, 125, 0.35);
+    }
+    
+    .record-btn:active {
+      transform: scale(0.96);
+    }
+    
+    .record-btn.recording {
+      background: linear-gradient(145deg, #ef4444, #dc2626);
+      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .ripple-effect {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid rgba(239, 68, 68, 0.6);
+      animation: ripple 1.5s ease-out infinite;
+    }
+    
+    .mic-icon {
+      width: 44px;
+      height: 44px;
+      fill: white;
+    }
+    
+    .btn-text {
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    
+    .timer {
+      font-size: 12px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+    
+    .record-hint {
+      font-size: 12px;
+      color: #8a9a92;
+      margin: 0;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #3d4f46;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 14px;
+      border: 2px solid #e5ebe8;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.6;
+      resize: vertical;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    
+    .textarea:focus {
+      outline: none;
+      border-color: #00a67d;
+    }
+    
+    .editable-record {
+      width: 100%;
+      min-height: 180px;
+      padding: 16px;
+      border: 2px solid #d4e5dd;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.7;
+      font-family: inherit;
+      background: linear-gradient(145deg, #f8faf9, #f0f5f3);
+      resize: vertical;
+    }
+    
+    .editable-record:focus {
+      outline: none;
+      border-color: #00a67d;
+      background: white;
+    }
+    
+    .result-box {
+      background: linear-gradient(145deg, #f8faf9, #f0f5f3);
+      border: 2px solid #d4e5dd;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      color: #2d3b35;
+      margin-bottom: 16px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    
+    .action-btn {
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+    
+    .primary-btn {
+      background: linear-gradient(145deg, #00a67d, #008f6b);
+      color: white;
+      box-shadow: 0 4px 16px rgba(0, 166, 125, 0.25);
+    }
+    
+    .primary-btn:active {
+      transform: scale(0.98);
+    }
+    
+    .primary-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .secondary-btn {
+      background: #f3f7f5;
+      color: #4a5a52;
+      border: 2px solid #e5ebe8;
+    }
+    
+    .secondary-btn:active {
+      background: #e8f0ec;
+    }
+    
+    .error-box {
+      background: #fef2f2;
+      border: 2px solid #fecaca;
+      color: #b91c1c;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+    
+    .review-header {
+      background: linear-gradient(145deg, #fef3c7, #fde68a);
+      border: 2px solid #f59e0b;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .review-header-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .review-header-title {
+      font-weight: 600;
+      color: #92400e;
+      font-size: 14px;
+    }
+    
+    .review-header-desc {
+      font-size: 12px;
+      color: #a16207;
+      margin-top: 2px;
+    }
+    
+    .success-header {
+      background: linear-gradient(145deg, #d1fae5, #a7f3d0);
+      border: 2px solid #10b981;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    
+    .success-header-icon {
+      flex-shrink: 0;
+      animation: checkmark 0.5s ease-out;
+    }
+    
+    .success-header-title {
+      font-weight: 600;
+      color: #065f46;
+      font-size: 15px;
+    }
+    
+    .success-header-desc {
+      font-size: 12px;
+      color: #047857;
+      margin-top: 2px;
+    }
+    
+    .info-row {
+      display: flex;
+      gap: 16px;
+      padding: 10px 14px;
+      background: #f8faf9;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #4a5a52;
+    }
+    
+    .info-label {
+      font-weight: 600;
+      color: #3d4f46;
+    }
+    
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e5ebe8;
+      border-top-color: #00a67d;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    
+    .loading-text {
+      font-size: 15px;
+      color: #3d4f46;
+      font-weight: 500;
+    }
+    
+    .guide-box {
+      background: rgba(255,255,255,0.6);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 8px;
+    }
+    
+    .guide-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #3d4f46;
+      margin-bottom: 10px;
+    }
+    
+    .guide-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      color: #5a6b62;
+      line-height: 1.7;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a2e28;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease-out;
+    }
   </style>
 </head>
-<body class="p-4 max-w-2xl mx-auto pb-20">
-
-  <div class="flex justify-between items-center mb-6 relative">
-    <div class="text-center w-full">
-      <h1 class="text-xl font-bold text-gray-800">
-        <i class="fas fa-file-medical text-blue-600 mr-2"></i>訪問看護報告書作成
-      </h1>
-      <p class="text-xs text-gray-500">月次まとめ（プレビュー→修正→保存） v9.0</p>
-    </div>
-    <button onclick="toggleSettings()" class="absolute right-0 text-gray-500 hover:text-gray-700 p-2">
-      <i class="fas fa-cog text-xl"></i>
-    </button>
-  </div>
-
-  <div id="statusMessage" class="hidden mb-4 p-4 rounded-md text-sm font-bold whitespace-pre-wrap"></div>
-
-  <div id="settingsPanel" class="hidden mb-4 bg-gray-100 p-4 rounded-lg border border-gray-300">
-    <label class="block text-sm font-bold text-gray-700 mb-2">Google Apps Script URL</label>
-    <input type="text" id="gasUrlInput" class="input-field mb-2" placeholder="https://script.google.com/macros/s/xxxx/exec">
-    <div class="text-xs text-gray-500 mb-2">※発行されたURL（/exec）を入力</div>
-    <button onclick="saveSettings()" class="btn-secondary">保存して閉じる</button>
-  </div>
-
-  <div class="card">
-    <h2 class="text-sm font-bold text-gray-600 mb-3"><i class="fas fa-user-circle mr-2"></i>基本情報</h2>
-    <div class="grid grid-cols-2 gap-3">
-      <div>
-        <label class="block text-xs text-gray-500">報告月</label>
-        <input type="month" id="reportMonth" class="input-field">
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500">患者氏名</label>
-        <input type="text" id="patientName" class="input-field" placeholder="例：山田 太郎">
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500">作成者職種</label>
-        <select id="staffType" class="input-field">
-          <option value="看護師">看護師</option>
-          <option value="理学療法士（PT）">理学療法士（PT）</option>
-          <option value="作業療法士（OT）">作業療法士（OT）</option>
-          <option value="言語聴覚士（ST）">言語聴覚士（ST）</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-xs text-gray-500">作成者氏名</label>
-        <input type="text" id="staffName" class="input-field" placeholder="例：鈴木 花子">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2 class="text-sm font-bold text-gray-600 mb-3"><i class="fas fa-edit mr-2"></i>1か月分の記録（貼り付け）</h2>
-    <textarea id="rawRecords" class="input-field h-44" placeholder="1か月分をそのまま貼ってください（複数日分OK）"></textarea>
-    <button onclick="document.getElementById('rawRecords').value=''" class="text-xs text-gray-400 mt-2 hover:text-red-500">
-      <i class="fas fa-trash-alt mr-1"></i>クリア
-    </button>
-  </div>
-
-  <button id="generateBtn" onclick="generatePreview()" class="btn-primary mb-4 shadow-lg">
-    <i class="fas fa-magic mr-2"></i>報告書を生成（プレビュー）
-  </button>
-
-  <div id="resultArea" class="hidden">
-    <div class="card">
-      <h3 class="font-bold text-gray-800 mb-2"><i class="fas fa-eye mr-2"></i>生成結果（編集OK）</h3>
-      <textarea id="generatedOutput" class="w-full bg-white border border-gray-200 rounded p-3 h-64 text-sm leading-relaxed"></textarea>
-
-      <div class="grid grid-cols-1 gap-2 mt-3">
-        <button onclick="copyToClipboard()" class="btn-outline">
-          <i class="far fa-copy mr-2"></i>コピー
-        </button>
-      </div>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>📋 訪問看護記録</h1>
+      <p>音声入力でかんたん記録作成</p>
     </div>
 
-    <div class="card">
-      <h3 class="font-bold text-gray-800 mb-2"><i class="fas fa-wrench mr-2"></i>修正（任意）</h3>
-      <div class="text-xs text-gray-500 mb-2">例：もっと短く／家族向けに／リスクを先に／専門用語を減らす 等</div>
-      <textarea id="revisionInstruction" class="input-field h-24" placeholder="修正したい内容を入力（空ならスキップ可）"></textarea>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-        <button id="reviseBtn" onclick="revisePreview()" class="btn-secondary">
-          <i class="fas fa-rotate-left mr-2"></i>修正して再生成
-        </button>
-        <button id="saveBtn" onclick="saveToNotion()" class="btn-primary">
-          <i class="fas fa-cloud-upload-alt mr-2"></i>OKなのでNotionに保存
-        </button>
+    <!-- Step: Input -->
+    <div id="step-input">
+      <!-- Patient Info -->
+      <div class="card">
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          基本情報
+        </div>
+        
+        <div class="input-row">
+          <div class="input-group">
+            <label class="input-label">訪問日</label>
+            <input type="date" id="visitDate" class="input-field">
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">利用者名（カナ）</label>
+            <input type="text" id="patientName" class="input-field" placeholder="ヤマダタロウ">
+            <div id="patientNameHint" class="input-hint">カタカナ・スペースなしで入力</div>
+            <div id="patientNameError" class="input-error hidden"></div>
+          </div>
+        </div>
+        
+        <div class="input-row" style="margin-top: 14px;">
+          <div class="input-group">
+            <label class="input-label">職種</label>
+            <select id="jobType" class="input-field">
+              <option value="">選択してください</option>
+              <option value="看護師">看護師</option>
+              <option value="リハビリ職">リハビリ職</option>
+            </select>
+          </div>
+          
+          <div class="input-group">
+            <label class="input-label">記録者</label>
+            <input type="text" id="recorderName" class="input-field" placeholder="記録者名">
+          </div>
+        </div>
       </div>
 
-      <div class="text-xs text-gray-500 mt-2">
-        ※「Notionに保存」は、生成結果を確認してから押してください（編集した内容も保存されます）
+      <!-- Recording -->
+      <div class="card">
+        <div class="record-section">
+          <button id="recordBtn" class="record-btn" onclick="toggleRecording()">
+            <div id="ripple1" class="ripple-effect hidden"></div>
+            <div id="ripple2" class="ripple-effect hidden" style="animation-delay: 0.5s;"></div>
+            <svg id="micIcon" class="mic-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" fill="none" stroke="white" stroke-width="2"/>
+              <line x1="12" y1="19" x2="12" y2="23" stroke="white" stroke-width="2"/>
+              <line x1="8" y1="23" x2="16" y2="23" stroke="white" stroke-width="2"/>
+            </svg>
+            <svg id="stopIcon" class="mic-icon hidden" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
+            <span id="btnText" class="btn-text">録音開始</span>
+            <span id="timerText" class="timer hidden">00:00</span>
+          </button>
+          <p id="recordHint" class="record-hint">ボタンを押して訪問記録を話してください</p>
+        </div>
+      </div>
+
+      <!-- Transcript -->
+      <div class="card">
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00a67d" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          音声認識テキスト
+        </div>
+        
+        <div id="errorBox" class="error-box hidden"></div>
+        
+        <textarea id="transcript" class="textarea" placeholder="音声入力の内容がここに表示されます。直接入力・編集も可能です。"></textarea>
+        
+        <div class="button-group">
+          <button id="generateBtn" class="action-btn primary-btn" onclick="generateRecord()" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            記録を生成
+          </button>
+          
+          <button class="action-btn secondary-btn" onclick="resetAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            リセット
+          </button>
+        </div>
+      </div>
+
+      <div class="guide-box">
+        <div class="guide-title">💡 記録のポイント</div>
+        <ul class="guide-list">
+          <li>バイタル、身体状態、処置内容を伝えてください</li>
+          <li>前回からの変化や特記事項を中心に</li>
+          <li>生成後に修正・編集できます</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Step: Review -->
+    <div id="step-review" class="hidden">
+      <div class="card">
+        <div class="review-header">
+          <svg class="review-header-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <div>
+            <div class="review-header-title">記録内容を確認してください</div>
+            <div class="review-header-desc">修正が必要な場合は直接編集できます</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">訪問日:</span>
+            <span id="reviewDate"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">利用者:</span>
+            <span id="reviewPatient"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">職種:</span>
+            <span id="reviewJobType"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">記録者:</span>
+            <span id="reviewRecorder"></span>
+          </div>
+        </div>
+
+        <div id="reviewError" class="error-box hidden"></div>
+
+        <div class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00a67d" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          生成された記録
+        </div>
+        
+        <textarea id="editableRecord" class="editable-record"></textarea>
+
+        <div class="button-group">
+          <button id="saveBtn" class="action-btn primary-btn" onclick="saveRecord()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            保存する
+          </button>
+          
+          <button class="action-btn secondary-btn" onclick="copyToClipboard()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            コピー
+          </button>
+          
+          <button class="action-btn secondary-btn" onclick="goBack()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"/>
+              <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            戻る
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step: Saved -->
+    <div id="step-saved" class="hidden">
+      <div class="card">
+        <div class="success-header">
+          <svg class="success-header-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div>
+            <div class="success-header-title">記録を保存しました！</div>
+            <div class="success-header-desc">スプレッドシートに追加されました</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="info-item">
+            <span class="info-label">訪問日:</span>
+            <span id="savedDate"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">利用者:</span>
+            <span id="savedPatient"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">職種:</span>
+            <span id="savedJobType"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">記録者:</span>
+            <span id="savedRecorder"></span>
+          </div>
+        </div>
+
+        <div id="savedRecord" class="result-box"></div>
+
+        <div class="button-group">
+          <button class="action-btn primary-btn" onclick="resetAll()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            新しい記録を作成
+          </button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-spinner"></div>
+    <div id="loadingText" class="loading-text">記録を生成中...</div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
 
   <script>
-    const STORAGE_KEY = 'GAS_URL_V9';
+    // ============================================
+    // 設定 - GASデプロイ後にURLを設定してください
+    // ============================================
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzD8hdjQ2RsZvm58It6JQxv8GNRINqMlYS31FwmHKxq5m6OW8i6siPjr2oMQ_kMig6jpA/exec';
+    
+    // State
+    let isRecording = false;
+    let recognition = null;
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+    let currentTranscript = '';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      document.getElementById('reportMonth').value = `${yyyy}-${mm}`;
-
-      const savedUrl = localStorage.getItem(STORAGE_KEY);
-      if (savedUrl) {
-        document.getElementById('gasUrlInput').value = savedUrl;
-      } else {
-        document.getElementById('settingsPanel').classList.remove('hidden');
-      }
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('visitDate').value = today;
+      
+      document.getElementById('patientName').addEventListener('input', validatePatientName);
+      document.getElementById('transcript').addEventListener('input', updateGenerateButton);
+      document.getElementById('jobType').addEventListener('change', updateGenerateButton);
+      document.getElementById('recorderName').addEventListener('input', updateGenerateButton);
     });
 
-    function toggleSettings() {
-      document.getElementById('settingsPanel').classList.toggle('hidden');
+    function validatePatientName() {
+      const input = document.getElementById('patientName');
+      const hint = document.getElementById('patientNameHint');
+      const error = document.getElementById('patientNameError');
+      let value = input.value;
+      
+      // スペース（全角・半角）を自動削除
+      const cleanedValue = value.replace(/[\s　]/g, '');
+      if (value !== cleanedValue) {
+        input.value = cleanedValue;
+        value = cleanedValue;
+      }
+      
+      // カタカナのみ（スペースなし）
+      const katakanaRegex = /^[ァ-ヶー]*$/;
+      
+      if (value && !katakanaRegex.test(value)) {
+        input.classList.add('error');
+        hint.classList.add('hidden');
+        error.textContent = 'カタカナのみ・スペースなしで入力してください';
+        error.classList.remove('hidden');
+        updateGenerateButton();
+        return false;
+      } else {
+        input.classList.remove('error');
+        hint.classList.remove('hidden');
+        error.classList.add('hidden');
+        updateGenerateButton();
+        return true;
+      }
     }
 
-    function saveSettings() {
-      const url = document.getElementById('gasUrlInput').value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
-      if (!url) return alert('URLを入力してください');
-      localStorage.setItem(STORAGE_KEY, url);
-      document.getElementById('gasUrlInput').value = url;
-      alert('設定を保存しました');
-      toggleSettings();
+    function updateGenerateButton() {
+      const transcript = document.getElementById('transcript').value.trim();
+      const patientName = document.getElementById('patientName').value.trim();
+      const jobType = document.getElementById('jobType').value;
+      const recorderName = document.getElementById('recorderName').value.trim();
+      const katakanaRegex = /^[ァ-ヶー]*$/;
+      const btn = document.getElementById('generateBtn');
+      
+      btn.disabled = !transcript || !patientName || !jobType || !recorderName || (patientName && !katakanaRegex.test(patientName));
     }
 
-    function basePayload() {
-      return {
-        reportMonth: document.getElementById('reportMonth').value,
-        patientName: document.getElementById('patientName').value,
-        staffType: document.getElementById('staffType').value,
-        staffName: document.getElementById('staffName').value,
-        rawRecords: document.getElementById('rawRecords').value
+    function toggleRecording() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    function startRecording() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        showError('お使いのブラウザは音声認識に対応していません。Chrome、Edge、Safariをご利用ください。');
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'ja-JP';
+
+      currentTranscript = document.getElementById('transcript').value;
+
+      recognition.onresult = function(event) {
+        let interimTranscript = '';
+        let finalTranscript = currentTranscript;
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+            currentTranscript = finalTranscript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+        
+        document.getElementById('transcript').value = finalTranscript + interimTranscript;
+        updateGenerateButton();
       };
+
+      recognition.onerror = function(event) {
+        if (event.error === 'not-allowed') {
+          showError('マイクへのアクセスを許可してください');
+        }
+        stopRecording();
+      };
+
+      recognition.onend = function() {
+        if (isRecording) {
+          recognition.start();
+        }
+      };
+
+      recognition.start();
+      isRecording = true;
+      recordingSeconds = 0;
+
+      const btn = document.getElementById('recordBtn');
+      btn.classList.add('recording');
+      document.getElementById('micIcon').classList.add('hidden');
+      document.getElementById('stopIcon').classList.remove('hidden');
+      document.getElementById('btnText').textContent = '停止';
+      document.getElementById('timerText').classList.remove('hidden');
+      document.getElementById('ripple1').classList.remove('hidden');
+      document.getElementById('ripple2').classList.remove('hidden');
+      document.getElementById('recordHint').textContent = '話してください...';
+
+      recordingTimer = setInterval(function() {
+        recordingSeconds++;
+        const mins = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
+        const secs = (recordingSeconds % 60).toString().padStart(2, '0');
+        document.getElementById('timerText').textContent = mins + ':' + secs;
+      }, 1000);
     }
 
-    function setStatus(msg, type) {
-      const statusDiv = document.getElementById('statusMessage');
-      statusDiv.textContent = msg;
-      statusDiv.className = `mb-4 p-4 rounded-md text-sm font-bold whitespace-pre-wrap block ${
-        type === 'ok' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-      }`;
-    }
-
-    function setLoading(isLoading, targetBtnId, text) {
-      const btn = document.getElementById(targetBtnId);
-      btn.disabled = isLoading;
-      btn.dataset.original = btn.dataset.original || btn.innerHTML;
-      btn.innerHTML = isLoading ? `<span class="spinner"></span>${text}` : btn.dataset.original;
-    }
-
-    async function postToGAS(payload) {
-      const gasUrl = localStorage.getItem(STORAGE_KEY);
-      if (!gasUrl) {
-        toggleSettings();
-        throw new Error('GASのURLが未設定です');
+    function stopRecording() {
+      if (recognition) {
+        recognition.stop();
+        recognition = null;
+      }
+      
+      isRecording = false;
+      
+      if (recordingTimer) {
+        clearInterval(recordingTimer);
+        recordingTimer = null;
       }
 
-      // CORS回避：text/plain
-      const response = await fetch(gasUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload),
-        redirect: 'follow'
-      });
-
-      // 失敗時に本文を読み、原因表示できるようにする
-      const text = await response.text();
-      let data;
-      try { data = JSON.parse(text); } catch (e) { throw new Error(`JSON解析に失敗: ${text}`); }
-
-      if (!response.ok) {
-        throw new Error(data?.error || `HTTP ${response.status}`);
-      }
-      if (!data.success) {
-        throw new Error(data.error || '不明なエラー');
-      }
-      return data;
+      const btn = document.getElementById('recordBtn');
+      btn.classList.remove('recording');
+      document.getElementById('micIcon').classList.remove('hidden');
+      document.getElementById('stopIcon').classList.add('hidden');
+      document.getElementById('btnText').textContent = '録音開始';
+      document.getElementById('timerText').classList.add('hidden');
+      document.getElementById('ripple1').classList.add('hidden');
+      document.getElementById('ripple2').classList.add('hidden');
+      document.getElementById('recordHint').textContent = 'ボタンを押して訪問記録を話してください';
     }
 
-    async function generatePreview() {
-      const payload = basePayload();
-      if (!payload.rawRecords.trim()) return alert('1か月分の記録を入力してください');
+    async function generateRecord() {
+      const transcript = document.getElementById('transcript').value.trim();
+      const patientName = document.getElementById('patientName').value.trim();
+
+      if (!transcript || !patientName || !validatePatientName()) {
+        return;
+      }
+
+      if (GAS_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        showError('システム設定が完了していません。管理者に連絡してください。');
+        return;
+      }
+
+      showLoading('記録を生成中...');
+      hideError();
 
       try {
-        setLoading(true, 'generateBtn', '生成中...');
-        document.getElementById('resultArea').classList.add('hidden');
-
-        const data = await postToGAS({ ...payload, action: 'generate' });
-
-        document.getElementById('generatedOutput').value = data.report;
-        document.getElementById('revisionInstruction').value = '';
-        document.getElementById('resultArea').classList.remove('hidden');
-        setStatus('生成が完了しました。内容を確認し、必要なら修正してからNotion保存できます。', 'ok');
-        document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-
-      } catch (err) {
-        console.error(err);
-        setStatus('エラーが発生しました：\n' + err.message + '\n\n※GASのURL、デプロイ（全員）、APIキー設定を確認してください。', 'ng');
-      } finally {
-        setLoading(false, 'generateBtn', '');
-      }
-    }
-
-    async function revisePreview() {
-      const payload = basePayload();
-      const previousDraft = document.getElementById('generatedOutput').value;
-      const revisionInstruction = document.getElementById('revisionInstruction').value;
-
-      if (!payload.rawRecords.trim()) return alert('1か月分の記録を入力してください');
-      if (!previousDraft.trim()) return alert('先に「生成（プレビュー）」してください');
-      if (!revisionInstruction.trim()) return alert('修正指示を入力してください（例：短く、家族向け、リスク優先など）');
-
-      try {
-        setLoading(true, 'reviseBtn', '修正中...');
-        const data = await postToGAS({
-          ...payload,
-          action: 'generate',
-          previousDraft,
-          revisionInstruction
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'generate',
+            transcript: transcript
+          })
         });
-        document.getElementById('generatedOutput').value = data.report;
-        setStatus('修正反映が完了しました。OKならNotionに保存してください。', 'ok');
 
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          throw new Error('Invalid response');
+        }
+        hideLoading();
+
+        if (result.success && result.data && result.data.record) {
+          showReviewStep(result.data.record);
+        } else {
+          showError(result.message || '記録の生成に失敗しました');
+        }
       } catch (err) {
-        console.error(err);
-        setStatus('エラーが発生しました：\n' + err.message, 'ng');
-      } finally {
-        setLoading(false, 'reviseBtn', '');
+        hideLoading();
+        showError('通信エラーが発生しました。ネットワークを確認してください。');
       }
     }
 
-    async function saveToNotion() {
-      const payload = basePayload();
-      const reportText = document.getElementById('generatedOutput').value;
-      if (!payload.rawRecords.trim()) return alert('1か月分の記録を入力してください');
-      if (!reportText.trim()) return alert('保存する本文が空です');
+    function showReviewStep(record) {
+      const visitDate = document.getElementById('visitDate').value;
+      const patientName = document.getElementById('patientName').value;
+      const jobType = document.getElementById('jobType').value;
+      const recorderName = document.getElementById('recorderName').value;
+
+      document.getElementById('reviewDate').textContent = formatDisplayDate(visitDate);
+      document.getElementById('reviewPatient').textContent = patientName;
+      document.getElementById('reviewJobType').textContent = jobType;
+      document.getElementById('reviewRecorder').textContent = recorderName;
+      document.getElementById('editableRecord').value = record;
+
+      document.getElementById('step-input').classList.add('hidden');
+      document.getElementById('step-review').classList.remove('hidden');
+      document.getElementById('step-saved').classList.add('hidden');
+    }
+
+    async function saveRecord() {
+      const visitDate = document.getElementById('visitDate').value;
+      const patientName = document.getElementById('patientName').value;
+      const jobType = document.getElementById('jobType').value;
+      const recorderName = document.getElementById('recorderName').value;
+      const record = document.getElementById('editableRecord').value;
+
+      showLoading('保存中...');
 
       try {
-        setLoading(true, 'saveBtn', 'Notion保存中...');
-        await postToGAS({ ...payload, action: 'save', reportText });
-        setStatus('Notionに保存しました！', 'ok');
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'save',
+            date: visitDate,
+            patientName: patientName,
+            jobType: jobType,
+            recorderName: recorderName,
+            record: record
+          })
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          throw new Error('Invalid response');
+        }
+        hideLoading();
+
+        if (result.success) {
+          showSavedStep();
+        } else {
+          showReviewError(result.message || '保存に失敗しました');
+        }
       } catch (err) {
-        console.error(err);
-        setStatus('Notion保存でエラー：\n' + err.message + '\n\n※Notionのスクリプトプロパティ設定（キー/DB）も確認してください。', 'ng');
-      } finally {
-        setLoading(false, 'saveBtn', '');
+        hideLoading();
+        showReviewError('通信エラーが発生しました');
       }
+    }
+
+    function showSavedStep() {
+      const visitDate = document.getElementById('visitDate').value;
+      const patientName = document.getElementById('patientName').value;
+      const jobType = document.getElementById('jobType').value;
+      const recorderName = document.getElementById('recorderName').value;
+      const record = document.getElementById('editableRecord').value;
+
+      document.getElementById('savedDate').textContent = formatDisplayDate(visitDate);
+      document.getElementById('savedPatient').textContent = patientName;
+      document.getElementById('savedJobType').textContent = jobType;
+      document.getElementById('savedRecorder').textContent = recorderName;
+      document.getElementById('savedRecord').textContent = record;
+
+      document.getElementById('step-input').classList.add('hidden');
+      document.getElementById('step-review').classList.add('hidden');
+      document.getElementById('step-saved').classList.remove('hidden');
+    }
+
+    function formatDisplayDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日';
     }
 
     function copyToClipboard() {
-      const el = document.getElementById("generatedOutput");
-      el.select();
-      document.execCommand("copy");
-      alert("コピーしました！");
+      const record = document.getElementById('editableRecord').value;
+      
+      navigator.clipboard.writeText(record).then(function() {
+        showToast('コピーしました');
+      });
+    }
+
+    function goBack() {
+      document.getElementById('step-input').classList.remove('hidden');
+      document.getElementById('step-review').classList.add('hidden');
+      document.getElementById('step-saved').classList.add('hidden');
+    }
+
+    function resetAll() {
+      document.getElementById('patientName').value = '';
+      document.getElementById('transcript').value = '';
+      document.getElementById('editableRecord').value = '';
+      document.getElementById('jobType').value = '';
+      document.getElementById('recorderName').value = '';
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('visitDate').value = today;
+      
+      document.getElementById('step-input').classList.remove('hidden');
+      document.getElementById('step-review').classList.add('hidden');
+      document.getElementById('step-saved').classList.add('hidden');
+      
+      hideError();
+      updateGenerateButton();
+    }
+
+    function showLoading(text) {
+      document.getElementById('loadingText').textContent = text;
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById('errorBox');
+      errorBox.textContent = message;
+      errorBox.classList.remove('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('errorBox').classList.add('hidden');
+    }
+
+    function showReviewError(message) {
+      const errorBox = document.getElementById('reviewError');
+      errorBox.textContent = message;
+      errorBox.classList.remove('hidden');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2000);
     }
   </script>
 </body>
